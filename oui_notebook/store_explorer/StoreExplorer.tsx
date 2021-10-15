@@ -6,6 +6,8 @@ interface IProps {
   rootVarName: string;
 }
 
+const selectedStyle = { background: '#d1d1d1' }
+
 const StoreExplorer = ({ meta, rootKeys, rootVarName }: IProps) => {
   const [children, setChildren] = useState([]);
   const [childrenPath, setChildrenPath] = useState([]);
@@ -33,44 +35,61 @@ const StoreExplorer = ({ meta, rootKeys, rootVarName }: IProps) => {
     let accessPath = '';
     if (depth) {
       for (let i = 0; i < depth; i++) {
-        accessPath += `[${childrenPath[i]}]`;
+        accessPath += `['${childrenPath[i]}']`;
       }
     }
-    accessPath += `[${key}]`;
-    window['otosense']['childIsReady'] = (newChild) => receiveChild(depth, key, newChild);
+    accessPath += `['${key}']`;
+    window['otosense']['childIsReady'] = (newChild) => {
+      console.log({ newChild });
+      receiveChild(depth, key, newChild);
+    }
     const pythonStatement = `load_store_child("${rootVarName}", "${accessPath}")`;
     console.log({ pythonStatement });
     console.log({ jupyter: window['Jupyter'].notebook.kernel.execute(pythonStatement) });
   }
 
   const renderLeaf = () => {
-    return <div>Leaf node</div>;
+    return <div>Leaf node (cannot render)</div>;
   }
 
   return (
-    <div>
-      <header>{JSON.stringify(meta)}</header>
-      <div>varname: {rootVarName}</div>
-      <div>
-        {rootKeys.map((key: string) => (
-          <div key={key} onClick={() => expandChild(0, key)}>{key}</div>
-        ))}
+    <div style={{ display: 'flex' }}>
+      <div style={{}}>
+        <header>{JSON.stringify(meta)}</header>
+        <div>varname: {rootVarName}</div>
+        <div>
+          {rootKeys.map((key: string) => (
+            <div
+              key={key}
+              style={childrenPath.length && key === childrenPath[0] ? selectedStyle : {}}
+              onClick={() => expandChild(0, key)}
+            >{key}
+            </div>
+          ))}
+        </div>
+      </div>
+      <>
         {childrenPath.map((childKey: string, depth: number) => {
           if (depth < childrenPath.length - 1 || !isLeaf) {
             return (
-              <>
-                <div>{JSON.stringify(children[depth].meta)}</div>
-                <>
-                  {children[depth].keys.map((key: string) => (
-                    <div key={key} onClick={() => expandChild(depth + 1, key)}>{key}</div>
-                  ))}
-                </>
-              </>
+              <div style={{ marginLeft: 10 }}>
+                <div>{JSON.stringify(children[depth]?.meta || {})}</div>
+                <div>
+                  {children[depth] ? children[depth].keys.map((key: string) => (
+                    <div
+                      key={key}
+                      onClick={() => expandChild(depth + 1, key)}
+                      style={key === childrenPath[depth + 1] ? selectedStyle : {}}
+                    >{key}
+                    </div>
+                  )) : <div>Missing expected child node.</div>}
+                </div>
+              </div>
             );
           }
           return renderLeaf();
         })}
-      </div>
+      </>
     </div>
   );
 };
