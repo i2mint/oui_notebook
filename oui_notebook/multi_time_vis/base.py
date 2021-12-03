@@ -1,4 +1,4 @@
-from IPython.display import Javascript
+from IPython.display import Javascript, HTML
 from copy import copy
 from typing import Optional
 
@@ -15,7 +15,7 @@ def single_time_vis(channel: dict,
                     title: str = '',
                     subtitle='',
                     **kwargs
-                    ) -> Javascript:
+                    ) -> HTML:
     """
     Render a visualization of time series or audio data.
 
@@ -53,6 +53,7 @@ def single_time_vis(channel: dict,
     channel = _preprocess_channel(channel)
     props = dict(kwargs, bt=bt, tt=tt, chart_type=chart_type, enable_playback=enable_playback, height=height,
                  params=params, title=title, subtitle=subtitle)
+    print('changes took')
     return _single_time_vis(channel, props)
 
 
@@ -66,11 +67,13 @@ def time_vis(channels, props=None) -> Javascript:
     if not props:
         props = {}
     channels = [_preprocess_channel(channel) for channel in channels]
-    js_source = f'renderMultiTimeVis(element.get(0), {channels}, {props})'.replace('True', 'true').replace('None',
-                                                                                                           'null')
-    jsobj = Javascript(js_source)
-    jsobj._trace = {'channels': channels, 'props': props}
-    return jsobj
+    # js_source = f'renderMultiTimeVis(element.get(0), {channels}, {props})'.replace('True', 'true').replace('None',
+    js_source = f'renderMultiTimeVis(document.getElementById("mytimevis"), {channels}, {props})'.replace('True', 'true').replace('None', 'null')
+    html_source = f'<div id="mytimevis" /><script>{js_source}</script>'
+    # jsobj = Javascript(js_source)
+    # jsobj._trace = {'channels': channels, 'props': props}
+    # return jsobj
+    return HTML(html_source)
 
 
 def _preprocess_channel(channel):
@@ -103,7 +106,11 @@ def _single_time_vis(channel, props) -> Javascript:
         channel['chartType'] = props['chart_type']
     ##########################################################################################
 
-    js_source = f'renderTimeChannel(element.get(0), {channel}, {props})'.replace('True', 'true').replace('None', 'null')
-    jsobj = Javascript(js_source)
-    jsobj._trace = {'channel': channel, 'props': props}
-    return jsobj
+    # js_source = f'renderTimeChannel(element.get(0), {channel}, {props})'.replace('True', 'true').replace('None', 'null')
+    js_source = f'renderTimeChannel(document.getElementById("mytimevis"), {channel}, {props})'.replace('True', 'true').replace('None', 'null')
+    html_source = f'<div id="mytimevis" /><script>{js_source}</script>'
+    # jsobj = Javascript(js_source)
+    # jsobj._trace = {'channel': channel, 'props': props}
+    # return jsobj
+    print('making HTML')
+    return HTML(html_source)

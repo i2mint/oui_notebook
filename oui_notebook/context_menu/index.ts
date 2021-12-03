@@ -7,7 +7,7 @@ import { MultiTimeVis, TimeChannel } from '@otosense/multi-time-vis';
 const DFLT_CHK_SIZE_MCS: number = 975238;
 import { bytesToMcs, DFLT_SR, generateWAVHeader } from '@otosense/sound-utils';
 
-export function addContextMenu(
+export function renderTimeChannel(
   element: HTMLElement,
   channel: any,
   props: any

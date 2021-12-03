@@ -1,4 +1,4 @@
-from IPython.display import display, Javascript
+from IPython.display import display, Javascript, HTML
 import json
 import traceback
 
@@ -19,9 +19,13 @@ def explore_store(store, store_varname):
     meta = getattr(store, 'meta', {})
     set_store(store_varname, store)
     javascript_statement = f'otosense.renderStoreExplorer(element.get(0), {json_friendly_root_keys}, "{store_varname}", {meta});'
+    javascript_statement = f'otosense.renderStoreExplorer(document.getElementById("storetest"), {json_friendly_root_keys}, "{store_varname}", {meta});'
     js_target = display(Javascript('console.log("registered reusable JS target")'), display_id='myjs')
+    html_code = f'<div id="storetest" /><script>{javascript_statement}</script>'.replace('True', 'true').replace('None', 'null')
     set_store('js_target', js_target)
-    return Javascript(javascript_statement.replace('True', 'true').replace('None', 'null'))
+    print('loading HTML')
+    return HTML(html_code)
+    # return Javascript(javascript_statement.replace('True', 'true').replace('None', 'null'))
 
 
 def load_store_child(store_varname, child_path):
