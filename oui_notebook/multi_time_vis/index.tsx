@@ -38,24 +38,37 @@ export function renderTimeChannel(
     />, element);
 }
 
+const makeSelectHandler = (pythonName: string) => (startRatio: number, endRatio: number) => {
+  const pythonStatement = `${pythonName}(${startRatio}, ${endRatio})`;
+  console.log({ pythonStatement });
+  console.log({ jupyter: window['Jupyter'].notebook.kernel.execute(pythonStatement) })
+}
+
 export function renderMultiTimeVis(
     element: HTMLElement,
     channels: any[],
     props: any,
+    callback: string,
 ): void {
-  console.log('multi time vis v0.2.0');
-  const preprocessedChannels = channels.map(preprocessChannel);
+  console.log('multi time vis v0.3.0', { props, channels, callback });
+  const preprocessedChannels: any[] = channels.map(preprocessChannel);
   const bt: number = props.bt || _.minBy(preprocessedChannels, 'bt').bt || 0;
   const tt: number = props.tt || _.maxBy(preprocessedChannels, 'tt').tt || 10000000;
-  console.log({ preprocessedChannels, bt, tt });
+  const handleSelect = callback ? makeSelectHandler(callback) : () => null;
   render(
     <MultiTimeVis
+      allowEvents
       channels={preprocessedChannels}
       from={bt}
       leftX={0}
+      onSelect={(a, b) => {
+        console.log({ a, b });
+        handleSelect(a, b);
+      }}
       params={props.params || {}}
       rightX={1}
       to={tt}
+      hideTimeScale
     />, element);
 }
 

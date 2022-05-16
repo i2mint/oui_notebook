@@ -18,8 +18,12 @@ module.exports = {
     },
     target: 'web',
     resolve: {
-        modules: [sourcePath, 'node_modules'],
-        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      alias: {
+        react: path.resolve('node_modules/react'),
+        'react-dom': path.resolve('node_modules/react-dom'),
+      },
+      modules: [sourcePath, 'node_modules'],
+      extensions: ['.js', '.jsx', '.ts', '.tsx'],
     },
     module: {
       rules: [{

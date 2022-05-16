@@ -56,7 +56,9 @@ def single_time_vis(channel: dict,
     return _single_time_vis(channel, props)
 
 
-def time_vis(channels, props=None) -> Javascript:
+def time_vis(channels,
+             callback=None,
+             props=None) -> Javascript:
     """
     Render multiple channels.
 
@@ -65,8 +67,9 @@ def time_vis(channels, props=None) -> Javascript:
     """
     if not props:
         props = {}
+    callback_name = callback.__name__ if callable(callback) else ''
     channels = [_preprocess_channel(channel) for channel in channels]
-    js_source = f'renderMultiTimeVis(element.get(0), {channels}, {props})'.replace('True', 'true').replace('None',
+    js_source = f'renderMultiTimeVis(element.get(0), {channels}, {props}, "{callback_name}")'.replace('True', 'true').replace('None',
                                                                                                            'null')
     jsobj = Javascript(js_source)
     jsobj._trace = {'channels': channels, 'props': props}
