@@ -5,10 +5,10 @@
 The typical sequence of the methodic and paranoid could be something like this:
 
 ```
-python pack.py current-configs  # see what you got
-python pack.py increment-configs-version  # update (increment the version and write that in setup.cfg
-python pack.py current-configs-version  # see that it worked
-python pack.py current-configs  # ... if you really want to see the whole configs again (you're really paranoid)
+python pack.py current-config  # see what you got
+python pack.py increment-config-version  # update (increment the version and write that in setup.cfg
+python pack.py current-config-version  # see that it worked
+python pack.py current-config  # ... if you really want to see the whole config again (you're really paranoid)
 python pack.py run-setup  # see that it worked
 python pack.py twine-upload-dist  # publish
 # and then go check things work...
@@ -80,9 +80,9 @@ def current_configs_version():
 #     """Update setup.cfg (at this point, just updates the version).
 #     If version is not given, will ask pypi (via http request) what the current version is, and increment that.
 #     """
-#     configs = read_and_resolve_setup_configs(new_deploy=new_deploy, version=version)
-#     clog(verbose, pprint(configs))
-#     write_configs(configs)
+#     config = read_and_resolve_setup_configs(new_deploy=new_deploy, version=version)
+#     clog(verbose, pprint(config))
+#     write_configs(config)
 
 
 def set_version(version):
