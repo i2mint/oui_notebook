@@ -20,6 +20,6 @@ djoin = lambda *p: os.path.join(data_dirpath, *p)
 def get_pkg_data(filename):
     path = djoin(filename)
     if filename.endswith('.json'):
-        return json.load(open(path, 'r'))
+        return json.load(open(path))
     else:
         raise ValueError(f"Unrecognized extension in {path}")
